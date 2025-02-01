@@ -61,7 +61,7 @@ pipeline {
                         sh "git config --list"
                         sh "git remote set-url origin https://${USER}:${PASS}@github.com/Princeton45/jenkins-dynamic-versioning.git"
                         sh "git add ."
-                        sh "git commit -m "ci: version bump""
+                        sh 'git commit -m "ci: version bump"'
                         sh "git push origin HEAD:main"
                     }
                 }
