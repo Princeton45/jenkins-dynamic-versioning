@@ -3,37 +3,45 @@ def gv
 pipeline {   
     agent any
     tools {
-        maven 'Maven'
+        maven 'maven-3.9'
     }
     stages {
-        stage("init") {
+        stage("increment version")
             steps {
                 script {
-                    gv = load "script.groovy"
+                    echo "incrementing app version..."
+                    sh 'mvn build-helper:parse-version versions:set \
+                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                        versions:commit'
+                }
+            }
+        stage("build app") {
+            steps {
+                script {
+                    echo "building the application"
+                    sh "mvn package"
                 }
             }
         }
-        stage("build jar") {
-            steps {
-                script {
-                    gv.buildJar()
-
-                }
-            }
-        }
-
         stage("build image") {
             steps {
                 script {
-                    gv.buildImage()
+                    echo "building the docker image"
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                        sh 'docker build -t prince450/demo-app:jma-2.0 .'
+                        sh 'echo $PASS | docker login -u $USER --password-stdin'
+                        sh 'docker push prince450/demo-app:jma-2.0'
+                    }
+
                 }
             }
         }
+
 
         stage("deploy") {
             steps {
                 script {
-                    gv.deployApp()
+                    echo "deploying docker image"
                 }
             }
         }               
