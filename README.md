@@ -13,28 +13,20 @@ Below is the Maven command I used in the `increment version` stage to increment 
 
 ```groovy
 
-stages {
-        stage("increment version")
-            steps {
-                script {
-                    echo "incrementing app version..."
-                    sh 'mvn build-helper:parse-version versions:set \
-                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
-                        versions:commit'
-                }
-            }
 ```
 
-I use `build-helper:parse-version` to read my current version (like "1.1.0")
+<have claude explain the code>
 
-With `versions:set`, I prepare to set my new version
 
-In `-DnewVersion`, I specify my version pattern:
-- I keep my major version (first number) using `${parsedVersion.majorVersion}`
-- I keep my minor version (second number) using `${parsedVersion.minorVersion}`
-- I increment my patch version (last number) using `${parsedVersion.nextIncrementalVersion}`
+2. **Incrementing the Docker image version:**
 
-Finally, I make my changes permanent with `versions:commit`
+
+3. **Replace new version in Dockerfile:**
+
+I also made sure that the `COPY` and `ENTRYPOINT` commands in the Dockerfile were using the proper incremented version name of the `JAR` application artifact 
+
+Instead of `ENTRYPOINT` in the Dockerfile, I used `CMD` so we can match the method used in the `COPY` command.
+
 
 
 
