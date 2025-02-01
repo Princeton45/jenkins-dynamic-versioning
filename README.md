@@ -27,6 +27,14 @@ I also made sure that the `COPY` and `ENTRYPOINT` commands in the Dockerfile wer
 
 Instead of `ENTRYPOINT` in the Dockerfile, I used `CMD` so we can match the method used in the `COPY` command.
 
+4.  **Commit version update of Jenkins back to Git Repository:**
+
+This step is crucial because without it, Jenkins will only increment the app version in the `pom.xml` file locally on its runner and not in the git repository. 
+
+If we run the pipeline twice without this step, it will use the old version because the pom.xml in the Git repository was not updated with the new incremeneted version.
+
+So now, when other developers want to commit something to the `main` branch for example, they first need to run a `git pull` or `git fetch` to get the changes to the `pom.xml` that Jenkins commited then continue working from there.
+
 
 
 
