@@ -67,9 +67,28 @@ CMD java -jar java-maven-app-*.jar
 
 This step is crucial because without it, Jenkins will only increment the app version in the `pom.xml` file locally on its runner and not in the git repository. 
 
-If we run the pipeline twice without this step, it will use the old version because the pom.xml in the Git repository was not updated with the new incremeneted version.
+If we run the pipeline twice without this step, it will use the old version because the `pom.xml` in the Git repository was not updated with the new incremeneted version.
 
 So now, when other developers want to commit something to the `main` branch for example, they first need to run a `git pull` or `git fetch` to get the changes to the `pom.xml` that Jenkins commited then continue working from there.
+
+```groovy
+ stage ("commit version update") {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github-credentials', passwordVariable: 'PASS', usernameVariable: 'USER')]){
+                        sh 'git config --global user.email "jenkins@example.com"'
+                        sh 'git config --global user.name "jenkins"'
+                        sh "git status"
+                        sh "git branch"
+                        sh "git config --list"
+                        sh "git remote set-url origin https://${USER}:${PASS}@github.com/Princeton45/jenkins-dynamic-versioning.git"
+                        sh "git add ."
+                        sh 'git commit -m "ci: version bump"'
+                        sh "git push origin HEAD:main"
+                    }
+                }
+            }
+```
 
 5.  **Prevent pipeline loops from CI version update commits**
 
