@@ -1,4 +1,4 @@
-# Demo Project: Dynamically Incrementing Application Version in a Jenkins Pipeline
+# Dynamically Incrementing Application Version in a Jenkins Pipeline
 
  This README documents my journey of creating a project focused on dynamically incrementing an application's version within a Jenkins CI/CD pipeline. I leveraged a mix of technologies, including Jenkins, Docker, Github, Git, Java, and Maven, to achieve this.
 
