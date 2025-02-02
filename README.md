@@ -35,7 +35,24 @@ If we run the pipeline twice without this step, it will use the old version beca
 
 So now, when other developers want to commit something to the `main` branch for example, they first need to run a `git pull` or `git fetch` to get the changes to the `pom.xml` that Jenkins commited then continue working from there.
 
+5.  **Prevent pipeline loops from CI version update commits**
 
+If you have a webhook configured to automatically trigger the Jenkins pipeline when a push is made to the branch while having the `Commit version update of Jenkins back to Git Repository` step configured, this will cause a commit loop.
 
+It creates a loop because:
 
+1. You push code → webhook triggers Jenkins pipeline
+2. Jenkins builds and commits version update → this is a new push
+3. That new push triggers webhook again → Jenkins runs again
+4. Repeat forever
+
+To fix this loop, I needed to make sure the workflow detects that a commit was made from Jenkins (not from a human) and to ignore the trigger when the commit is from Jenkins.
+
+I needed to install the `Ignore Committer Strategy` plugin in Jenkins
+
+![ignore](https://github.com/Princeton45/jenkins-dynamic-versioning/blob/main/images/ignore.png)
+
+Then I configured the `Ignore Committer Strategy` plugin to ignore commits that come from the author `jenkins@example.com` (I set the author for the `commit version update` step in the `Jenkinsfile`)
+
+![ignore](https://github.com/Princeton45/jenkins-dynamic-versioning/blob/main/images/ignore2.png)
     
